@@ -32,8 +32,8 @@ class RandomPlayer(Player):
         set_ascii_lowercase = set(ascii_lowercase)
         for letter in ascii_lowercase:
             for i in range(5):
-                for hint in ["0", "1", "2"]:
-                    self.word_index[(letter, i, hint)] = set()
+                for clue in ["0", "1", "2"]:
+                    self.word_index[(letter, i, clue)] = set()
         for index, row in self.bag_words.iterrows():
             letters_in_word = set(row["word"])
             for i in range(5):
