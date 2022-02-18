@@ -48,7 +48,7 @@ class GameState:
         self.answer = answer
         self.num_guesses = 0
         self.guesses = []
-        self.feedbacks = []
+        self.hints = []
         self.letter_to_count = {}
         for letter in ascii_lowercase:
             self.letter_to_count[letter] = 0
@@ -65,22 +65,22 @@ class GameState:
         """Update game status after getting a new guess."""
         self.num_guesses += 1
         self.guesses.append(new_guess)
-        new_feedback = ""
+        new_hint = ""
         letter_to_count_use = {}
         for letter in ascii_lowercase:
             letter_to_count_use[letter] = 0
         for i in range(5):
             if new_guess[i] == self.answer[i]:
-                new_feedback += "2"
+                new_hint += "2"
                 letter_to_count_use[new_guess[i]] += 1
             elif (letter_to_count_use[new_guess[i]] <
                   self.letter_to_count[new_guess[i]]):
                 letter_to_count_use[new_guess[i]] += 1
-                new_feedback += "1"
+                new_hint += "1"
             else:
-                new_feedback += "0"
-        self.feedbacks.append(new_feedback)
-        if new_feedback == "22222":
+                new_hint += "0"
+        self.hints.append(new_hint)
+        if new_hint == "22222":
             self.is_game_ongoing = False
             self.has_won = True
 
@@ -89,7 +89,7 @@ class GameState:
         message = (
             f"Correct answer: {self.answer}, "
             f"# of guesses: {self.num_guesses}, guesses: {self.guesses},\n"
-            f"feedbacks: {self.feedbacks},\n"
+            f"Hints: {self.hints},\n"
             f"game ongoing: {self.is_game_ongoing}, "
             f"game won: {self.has_won}\n"
         )
