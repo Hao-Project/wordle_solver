@@ -32,16 +32,16 @@ class RandomPlayer(Player):
         set_ascii_lowercase = set(ascii_lowercase)
         for letter in ascii_lowercase:
             for i in range(5):
-                for color in ["Green", "Grey", "Yellow"]:
-                    self.word_index[(letter, i, color)] = set()
+                for hint in ["0", "1", "2"]:
+                    self.word_index[(letter, i, hint)] = set()
         for index, row in self.bag_words.iterrows():
             letters_in_word = set(row["word"])
             for i in range(5):
-                self.word_index[row["word"][i], i, "Green"].add(index)
+                self.word_index[row["word"][i], i, "2"].add(index)
                 for letter in letters_in_word.difference(row["word"][i]):
-                    self.word_index[letter, i, "Yellow"].add(index)
+                    self.word_index[letter, i, "1"].add(index)
                 for letter in set_ascii_lowercase.difference(letters_in_word):
-                    self.word_index[letter, i, "Grey"].add(index)
+                    self.word_index[letter, i, "0"].add(index)
 
     def print_word_index(self, verbose=False):
         if verbose:
