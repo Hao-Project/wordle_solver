@@ -65,20 +65,23 @@ class GameState:
         """Update game status after getting a new guess."""
         self.num_guesses += 1
         self.guesses.append(new_guess)
-        new_hint = ""
+        new_hint_list = [""] * 5
         letter_to_count_use = {}
         for letter in ascii_lowercase:
             letter_to_count_use[letter] = 0
         for i in range(5):
             if new_guess[i] == self.answer[i]:
-                new_hint += "2"
+                new_hint_list[i] = "2"
                 letter_to_count_use[new_guess[i]] += 1
-            elif (letter_to_count_use[new_guess[i]] <
-                  self.letter_to_count[new_guess[i]]):
-                letter_to_count_use[new_guess[i]] += 1
-                new_hint += "1"
-            else:
-                new_hint += "0"
+        for i in range(5):
+            if new_hint_list[i] != "2":
+                if (letter_to_count_use[new_guess[i]] <
+                        self.letter_to_count[new_guess[i]]):
+                    letter_to_count_use[new_guess[i]] += 1
+                    new_hint_list[i] = "1"
+                else:
+                    new_hint_list[i] = "0"
+        new_hint = "".join(new_hint_list)
         self.hints.append(new_hint)
         if new_hint == "22222":
             self.is_game_ongoing = False
