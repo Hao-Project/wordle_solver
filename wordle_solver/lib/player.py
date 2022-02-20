@@ -1,5 +1,6 @@
 """Create the player for a Wordle game."""
 
+import random
 from string import ascii_lowercase
 
 class Player:
@@ -22,6 +23,8 @@ class RandomPlayer(Player):
         Player.__init__(self)
         self.random_state = random_state
         self.word_index = {}
+        self.possible_guess_indices = set()
+        self.previous_guess = None
 
     def set_bag_words(self, bag_words):
         """Set dictionary used by the player"""
@@ -54,6 +57,21 @@ class RandomPlayer(Player):
     def gen_guess(self, state):
         "generate a guess"
         new_random_state = self.random_state + state.num_guesses
-        guess = (self.bag_words["word"].sample(
-            n=1, random_state=new_random_state).values[0])
+        if state.num_guesses == 0:
+            random.seed(self.random_state)
+            self.possible_guess_indices = set(self.bag_words.index)
+            guess = (self.bag_words["word"].sample(
+                n=1, random_state=new_random_state).values[0])
+            self.previous_guess = guess
+        else:
+            #print(self.possible_guess_indices)
+            for i, x in enumerate(state.hints[-1]):
+                #print(self.possible_guess_indices)
+                possible_indices = self.word_index[self.previous_guess[i], i, x]
+                self.possible_guess_indices = (
+                    self.possible_guess_indices & possible_indices)
+            #print(self.possible_guess_indices)
+            guess_index = random.choice(tuple(self.possible_guess_indices))
+            guess = (self.bag_words.loc[guess_index, "word"])
+            self.previous_guess = guess
         return guess
