@@ -40,7 +40,7 @@ class RandomPlayer(Player):
                 self.word_index[row["word"][i], i, "2"].add(index)
                 for letter in letters_in_word.difference(row["word"][i]):
                     self.word_index[letter, i, "1"].add(index)
-                for letter in set_ascii_lowercase.difference(letters_in_word):
+                for letter in set_ascii_lowercase.difference(row["word"][i]):
                     self.word_index[letter, i, "0"].add(index)
 
     def print_word_index(self, verbose=False):
