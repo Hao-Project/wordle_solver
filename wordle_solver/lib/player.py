@@ -17,7 +17,7 @@ class Player:
         """Generate guess to wordle game"""
 
 
-class RandomPlayer(Player):
+class RandomStrategyPlayer(Player):
     """A player of wordle game that uses randomized strategy"""
     def __init__(self, random_state):
         Player.__init__(self)

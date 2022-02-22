@@ -2,7 +2,7 @@
 
 import pandas as pd
 from lib.game import Game
-from lib.player import RandomPlayer
+from lib.player import RandomStrategyPlayer
 
 DATA_PATH = r"wordle_solver\datasets"
 SUMMARY_PATH = r"wordle_solver\summary"
@@ -32,7 +32,7 @@ def main():
         word_bags[key] = pd.read_csv(DATA_PATH + data)
 
     game = Game(RANDOM_STATE_GAME)
-    random_player = RandomPlayer(RANDOM_STATE_PLAYER)
+    random_player = RandomStrategyPlayer(RANDOM_STATE_PLAYER)
 
     win_rates = {}
     for key, bag_words in word_bags.items():
