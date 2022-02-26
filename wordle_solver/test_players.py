@@ -2,7 +2,7 @@
 
 import pandas as pd
 from lib.game import Game
-from lib.player import RandomStrategyPlayer
+from lib.random_strategy_player import RandomStrategyPlayer
 
 DATA_PATH = r"wordle_solver\datasets"
 SUMMARY_PATH = r"wordle_solver\summary"
