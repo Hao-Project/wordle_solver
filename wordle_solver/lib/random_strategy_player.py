@@ -6,12 +6,13 @@ from lib.player import Player
 
 class RandomStrategyPlayer(Player):
     """A player of wordle game that uses randomized strategy"""
-    def __init__(self, random_state):
+    def __init__(self, random_state, perturbation_rate=0):
         Player.__init__(self)
         self.random_state = random_state
         self.word_index = {}
         self.possible_guess_indices = set()
         self.previous_guess = None
+        self.perturbation_rate = perturbation_rate
 
     def set_bag_words(self, bag_words):
         """Set dictionary used by the player"""
@@ -44,8 +45,8 @@ class RandomStrategyPlayer(Player):
     def gen_guess(self, state):
         "generate a guess"
         new_random_state = self.random_state + state.num_guesses
+        random.seed(new_random_state)
         if state.num_guesses == 0:
-            random.seed(self.random_state)
             self.possible_guess_indices = set(self.bag_words.index)
             guess = (self.bag_words["word"].sample(
                 n=1, random_state=new_random_state).values[0])
@@ -58,7 +59,12 @@ class RandomStrategyPlayer(Player):
                 self.possible_guess_indices = (
                     self.possible_guess_indices & possible_indices)
             #print(self.possible_guess_indices)
-            guess_index = random.choice(tuple(self.possible_guess_indices))
-            guess = (self.bag_words.loc[guess_index, "word"])
+            if random.uniform(0, 1) < self.perturbation_rate:
+                guess = (self.bag_words["word"].sample(
+                    n=1, random_state=new_random_state).values[0])
+            else:
+                guess_index = random.choice(tuple(self.possible_guess_indices))
+                guess = (self.bag_words.loc[guess_index, "word"])
+
             self.previous_guess = guess
         return guess
