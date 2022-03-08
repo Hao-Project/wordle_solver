@@ -6,8 +6,10 @@ from lib.player import Player
 
 class RandomStrategyPlayer(Player):
     """A player of wordle game that uses randomized strategy"""
-    def __init__(self, random_state, perturbation_rate=0):
+    def __init__(self, use_fixed_seed=False, random_state=None,
+                 perturbation_rate=0):
         Player.__init__(self)
+        self.use_fixed_seed = use_fixed_seed
         self.random_state = random_state
         self.word_index = {}
         self.possible_guess_indices = set()
@@ -44,8 +46,11 @@ class RandomStrategyPlayer(Player):
 
     def gen_guess(self, state):
         "generate a guess"
-        new_random_state = self.random_state + state.num_guesses
-        random.seed(new_random_state)
+        if self.use_fixed_seed:
+            new_random_state = self.random_state + state.num_guesses
+            random.seed(new_random_state)
+        else:
+            random.seed()
         if state.num_guesses == 0:
             self.possible_guess_indices = set(self.bag_words.index)
             guess_index = random.choice(tuple(self.bag_words.index))

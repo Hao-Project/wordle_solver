@@ -32,7 +32,7 @@ def main():
         word_bags[key] = pd.read_csv(DATA_PATH + data)
 
     game = Game(RANDOM_STATE_GAME)
-    random_player = RandomStrategyPlayer(RANDOM_STATE_PLAYER)
+    random_player = RandomStrategyPlayer(True, RANDOM_STATE_PLAYER, 0.01)
 
     win_rates = {}
     for key, bag_words in word_bags.items():
