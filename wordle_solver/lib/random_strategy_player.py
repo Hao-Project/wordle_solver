@@ -48,8 +48,8 @@ class RandomStrategyPlayer(Player):
         random.seed(new_random_state)
         if state.num_guesses == 0:
             self.possible_guess_indices = set(self.bag_words.index)
-            guess = (self.bag_words["word"].sample(
-                n=1, random_state=new_random_state).values[0])
+            guess_index = random.choice(tuple(self.bag_words.index))
+            guess = (self.bag_words.loc[guess_index, "word"])
             self.previous_guess = guess
         else:
             #print(self.possible_guess_indices)
@@ -60,8 +60,8 @@ class RandomStrategyPlayer(Player):
                     self.possible_guess_indices & possible_indices)
             #print(self.possible_guess_indices)
             if random.uniform(0, 1) < self.perturbation_rate:
-                guess = (self.bag_words["word"].sample(
-                    n=1, random_state=new_random_state).values[0])
+                guess_index = random.choice(tuple(self.bag_words.index))
+                guess = (self.bag_words.loc[guess_index, "word"])
             else:
                 guess_index = random.choice(tuple(self.possible_guess_indices))
                 guess = (self.bag_words.loc[guess_index, "word"])
