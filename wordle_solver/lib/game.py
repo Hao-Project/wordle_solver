@@ -1,12 +1,13 @@
 """Create and play a Wordle game."""
 
 from string import ascii_lowercase
-
+from datetime import datetime
 
 class Game:
     """A wordle game"""
-    def __init__(self, random_state):
+    def __init__(self, use_fixed_seed=False, random_state=None):
         self.total_round_guess = 6
+        self.use_fixed_seed = use_fixed_seed
         self.random_state = random_state
         self.bag_words = None
         self.game_state = None
@@ -18,7 +19,12 @@ class Game:
 
     def set_game_answer(self):
         """Set an answer to a round of game"""
-        new_random_state = self.random_state + self.count_game_played
+        if self.use_fixed_seed:
+            new_random_state = self.random_state + self.count_game_played
+        else:
+            curr_dt = datetime.now()
+            new_random_state = (
+                int(round(curr_dt.timestamp())) + self.count_game_played)
         word = (self.bag_words["word"].sample(
             n=1, random_state=new_random_state).values[0])
         return word
