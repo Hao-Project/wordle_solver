@@ -4,7 +4,7 @@ import pandas as pd
 from lib.game import Game
 from lib.random_strategy_player import RandomStrategyPlayer
 
-DATA_PATH = r"wordle_solver\datasets"
+DATA_PATH = r"wordle_solver\datasets\words"
 SUMMARY_PATH = r"wordle_solver\summary"
 
 RANDOM_STATE_GAME = 123
