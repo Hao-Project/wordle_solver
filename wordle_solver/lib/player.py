@@ -10,5 +10,5 @@ class Player:
         """Set dictionary used by the player"""
         self.bag_words = bag_words
 
-    def gen_guess(self, state):
+    def gen_guess(self, state, verbose=False):
         """Generate guess to wordle game"""

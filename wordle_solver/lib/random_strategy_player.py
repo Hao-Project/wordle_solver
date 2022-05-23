@@ -44,7 +44,7 @@ class RandomStrategyPlayer(Player):
                 if len(indices) > 0:
                     print(f"{word}: {indices}")
 
-    def gen_guess(self, state):
+    def gen_guess(self, state, verbose=False):
         "generate a guess"
         if self.use_fixed_seed:
             new_random_state = self.random_state + state.num_guesses
@@ -57,13 +57,12 @@ class RandomStrategyPlayer(Player):
             guess = (self.bag_words.loc[guess_index, "word"])
             self.previous_guess = guess
         else:
-            #print(self.possible_guess_indices)
             for i, x in enumerate(state.hints[-1]):
-                #print(self.possible_guess_indices)
                 possible_indices = self.word_index[self.previous_guess[i], i, x]
                 self.possible_guess_indices = (
                     self.possible_guess_indices & possible_indices)
-            #print(self.possible_guess_indices)
+            if verbose:
+                print(f"Possible Indices: {self.possible_guess_indices}")
             if random.uniform(0, 1) < self.perturbation_rate:
                 guess_index = random.choice(tuple(self.bag_words.index))
                 guess = (self.bag_words.loc[guess_index, "word"])

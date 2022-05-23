@@ -33,7 +33,7 @@ class Game:
         """Play one round of game"""
         self.game_state = GameState(self.set_game_answer())
         for _ in range(self.total_round_guess):
-            guess = player.gen_guess(self.game_state)
+            guess = player.gen_guess(self.game_state, verbose)
             self.game_state.update(guess)
             if verbose:
                 self.game_state.print()
