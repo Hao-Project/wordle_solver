@@ -3,8 +3,12 @@ launch.json
 settings.json
 .env
 pylintrc
+*.log
+*.ini
 
+archive
 datasets
+models
 summary
 TO_DO
 test.py
