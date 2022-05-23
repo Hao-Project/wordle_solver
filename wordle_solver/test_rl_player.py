@@ -23,9 +23,9 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     config.read(config_file)
 
     bag_word = pd.read_csv(config["common"]["path_bag_words"])
-    random_state_game = int(config["common"]["random_state_game"])
-    random_state_player = int(config["common"]["random_state_player"])
-    num_testing_rounds = int(config["common"]["num_testing_rounds"])
+    random_state_game = config.getint("common", "random_state_game")
+    random_state_player = config.getint("common", "random_state_player")
+    num_testing_rounds = config.getint("common", "num_testing_rounds")
     model_path = config["common"]["model"]
 
     model = keras.models.load_model(model_path)

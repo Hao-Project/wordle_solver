@@ -23,10 +23,10 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     config = ConfigParser()
     config.read(config_file)
     bag_word = pd.read_csv(config["common"]["path_bag_words"])
-    random_state_game = int(config["common"]["random_state_game"])
-    random_state_player = int(config["common"]["random_state_player"])
-    num_training_rounds = int(config["common"]["num_training_rounds"])
-    game_play_verbose = bool(config["common"]["game_play_verbose"])
+    random_state_game = config.getint("common", "random_state_game")
+    random_state_player = config.getint("common", "random_state_player")
+    num_training_rounds = config.getint("common", "num_training_rounds")
+    game_play_verbose = config.getboolean("common", "game_play_verbose")
 
     if config["common"]["mode"] == "new":
         embed_size = 20
