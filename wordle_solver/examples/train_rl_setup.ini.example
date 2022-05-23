@@ -1,0 +1,15 @@
+[common]
+# when mode = "new", train new model and save at model_out
+# when mode = "continue", load previously trained model and continue training
+mode = continue
+path_bag_words = wordle_solver\datasets\words\5letter_words_top100.csv
+num_training_rounds = 5
+game_play_verbose = False
+
+random_state_game = 1234
+random_state_player = 123
+
+[model]
+# model_in no need to set when mode = "new"
+model_in = wordle_solver/models/model_trained_20220516.h5
+model_out = wordle_solver/models/model_trained_20220516_2.h5
