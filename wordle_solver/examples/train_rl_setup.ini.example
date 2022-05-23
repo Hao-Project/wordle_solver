@@ -5,6 +5,7 @@ mode = continue
 path_bag_words = wordle_solver\datasets\words\5letter_words_top100.csv
 num_training_rounds = 5
 game_play_verbose = False
+game_play_verbose = False
 
 random_state_game = 1234
 random_state_player = 123

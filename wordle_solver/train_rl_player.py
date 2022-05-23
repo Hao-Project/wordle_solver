@@ -27,6 +27,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     random_state_player = config.getint("common", "random_state_player")
     num_training_rounds = config.getint("common", "num_training_rounds")
     game_play_verbose = config.getboolean("common", "game_play_verbose")
+    game_train_verbose = config.getboolean("common", "game_train_verbose")
 
     if config["common"]["mode"] == "new":
         embed_size = 20
@@ -50,7 +51,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
 
     for _ in range(num_training_rounds):
         game.play(rl_player, verbose=game_play_verbose)
-        rl_player.train(game.game_state, adam_optimizer)
+        rl_player.train(game.game_state, adam_optimizer, game_train_verbose)
     rl_player.save_model(config["model"]["model_out"])
 
     end_time = datetime.now()
