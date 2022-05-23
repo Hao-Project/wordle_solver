@@ -26,8 +26,9 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     random_state_game = int(config["common"]["random_state_game"])
     random_state_player = int(config["common"]["random_state_player"])
     num_testing_rounds = int(config["common"]["num_testing_rounds"])
+    model_path = config["common"]["model"]
 
-    model = keras.models.load_model(config["common"]["model"])
+    model = keras.models.load_model(model_path)
 
     game = Game(True, random_state_game)
     rl_player = RLStrategyPlayer(random_state_player, model, NUM_OOV_BUCKETS)
@@ -40,6 +41,7 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     game_won_ratio = game_won_count / num_testing_rounds
 
     sys.stdout = log
+    print(f"Tested model: {model_path}")
     testing_message = (
         f"Played {num_testing_rounds} rounds, Won {game_won_count} Rounds, "
         f"Win Ratio = {game_won_ratio}")
