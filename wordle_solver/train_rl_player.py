@@ -28,6 +28,8 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     num_training_rounds = config.getint("common", "num_training_rounds")
     game_play_verbose = config.getboolean("common", "game_play_verbose")
     game_train_verbose = config.getboolean("common", "game_train_verbose")
+    model_in_path = config["model"]["model_in"]
+    model_out_path = config["model"]["model_out"]
 
     if config["common"]["mode"] == "new":
         embed_size = 20
@@ -41,7 +43,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
             keras.layers.Dense(num_words, activation="softmax")
         ])
     else:
-        model = keras.models.load_model(config["model"]["model_in"])
+        model = keras.models.load_model(model_in_path)
 
     game = Game(True, random_state_game)
     rl_player = RLStrategyPlayer(random_state_player, model, NUM_OOV_BUCKETS)
@@ -52,10 +54,15 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     for _ in range(num_training_rounds):
         game.play(rl_player, verbose=game_play_verbose)
         rl_player.train(game.game_state, adam_optimizer, game_train_verbose)
-    rl_player.save_model(config["model"]["model_out"])
+    rl_player.save_model(model_out_path)
 
     end_time = datetime.now()
     sys.stdout = log
+    if config["common"]["mode"] == "new":
+        print(f"Trained model: {model_out_path}")
+    else:
+        print(f"Start from {model_in_path}")
+        print(f"Trained model: {model_out_path}")
     print("Training Time: {}".format(end_time - start_time))
     log.close()
 
