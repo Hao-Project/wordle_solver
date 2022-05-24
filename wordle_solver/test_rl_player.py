@@ -26,6 +26,8 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     random_state_game = config.getint("common", "random_state_game")
     random_state_player = config.getint("common", "random_state_player")
     num_testing_rounds = config.getint("common", "num_testing_rounds")
+    game_play_verbose = config.getboolean("common", "game_play_verbose")
+
     model_path = config["common"]["model"]
 
     model = keras.models.load_model(model_path)
@@ -36,7 +38,7 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     rl_player.set_bag_words(bag_word)
     game_won_count = 0
     for _ in range(num_testing_rounds):
-        game_won_count += game.play(rl_player, verbose=True)
+        game_won_count += game.play(rl_player, game_play_verbose)
         rl_player.reset_status()
     game_won_ratio = game_won_count / num_testing_rounds
 

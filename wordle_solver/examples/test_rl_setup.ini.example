@@ -2,6 +2,7 @@
 path_bag_words = wordle_solver\datasets\words\5letter_words_top100.csv
 model = wordle_solver/models/model_trained_20220516.h5
 num_testing_rounds = 10
+game_play_verbose = False
 
 random_state_game = 1
 random_state_player = 12
