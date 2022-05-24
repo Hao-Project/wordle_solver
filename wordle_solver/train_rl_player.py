@@ -63,6 +63,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     else:
         print(f"Start from {model_in_path}")
         print(f"Trained model: {model_out_path}")
+    print(f"Trained {num_training_rounds} rounds")
     print("Training Time: {}".format(end_time - start_time))
     log.close()
 
