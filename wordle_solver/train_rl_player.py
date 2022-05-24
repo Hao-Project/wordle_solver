@@ -18,7 +18,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     time_stamp = start_time.strftime("%Y%m%d_%H%M%S")
     log_file = r"wordle_solver\log\train_rl_player_{0}.log".format(time_stamp)
     log = open(log_file, "a")
-    # sys.stdout = log
+    sys.stdout = log
 
     config = ConfigParser()
     config.read(config_file)
@@ -57,7 +57,6 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     rl_player.save_model(model_out_path)
 
     end_time = datetime.now()
-    sys.stdout = log
     if config["common"]["mode"] == "new":
         print(f"Trained model: {model_out_path}")
     else:

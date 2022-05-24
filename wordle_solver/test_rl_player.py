@@ -18,6 +18,7 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     time_stamp = start_time.strftime("%Y%m%d_%H%M%S")
     log_file = r"wordle_solver\log\test_rl_player_{0}.log".format(time_stamp)
     log = open(log_file, "a")
+    sys.stdout = log
 
     config = ConfigParser()
     config.read(config_file)
@@ -42,7 +43,6 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
         rl_player.reset_status()
     game_won_ratio = game_won_count / num_testing_rounds
 
-    sys.stdout = log
     print(f"Tested model: {model_path}")
     testing_message = (
         f"Played {num_testing_rounds} rounds, Won {game_won_count} Rounds, "
