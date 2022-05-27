@@ -4,5 +4,6 @@ model = wordle_solver/models/model_trained_20220516.h5
 num_testing_rounds = 10
 game_play_verbose = False
 
+game_seed_fixed = False
 random_state_game = 1
 random_state_player = 12

@@ -23,11 +23,12 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     config = ConfigParser()
     config.read(config_file)
     bag_word = pd.read_csv(config["common"]["path_bag_words"])
-    random_state_game = config.getint("common", "random_state_game")
-    random_state_player = config.getint("common", "random_state_player")
     num_training_rounds = config.getint("common", "num_training_rounds")
     game_play_verbose = config.getboolean("common", "game_play_verbose")
     game_train_verbose = config.getboolean("common", "game_train_verbose")
+    game_seed_fixed = config.getboolean("common", "game_seed_fixed")
+    random_state_game = config.getint("common", "random_state_game")
+    random_state_player = config.getint("common", "random_state_player")
     model_in_path = config["model"]["model_in"]
     model_out_path = config["model"]["model_out"]
 
@@ -45,7 +46,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     else:
         model = keras.models.load_model(model_in_path)
 
-    game = Game(True, random_state_game)
+    game = Game(game_seed_fixed, random_state_game)
     rl_player = RLStrategyPlayer(random_state_player, model, NUM_OOV_BUCKETS)
     adam_optimizer = keras.optimizers.Adam(lr=0.01)
     game.set_bag_words(bag_word)
