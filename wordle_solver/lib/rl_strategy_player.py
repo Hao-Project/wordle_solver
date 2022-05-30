@@ -77,6 +77,8 @@ class RLStrategyPlayer(Player):
 
     def train(self, state, optimizer, verbose):
         answer = state.answer
+        if verbose:
+            print("Model before training", self.model.trainable_variables)
         target = self.bag_words.query("word == @answer").index.values
         if verbose:
             print(target)
@@ -90,6 +92,8 @@ class RLStrategyPlayer(Player):
             print(grads)
         optimizer.apply_gradients(zip(grads,
             self.model.trainable_variables))
+        if verbose:
+            print("Model after training", self.model.trainable_variables)
         self.reset_status()
 
     def save_model(self, model_file):
