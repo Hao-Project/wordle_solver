@@ -9,11 +9,12 @@ from lib.player import Player
 class RLStrategyPlayer(Player):
     """Player of Wordle using strategy trained by reinforcement learning"""
     def __init__(
-            self, model, num_oov_buckets, use_fixed_seed=False,
-            random_state=None):
+            self, model, input_size, num_nonletter_buckets,
+            use_fixed_seed=False, random_state=None):
         Player.__init__(self)
         self.model = model
-        self.num_oov_buckets = num_oov_buckets
+        self.input_size = input_size
+        self.num_nonletter_buckets = num_nonletter_buckets
         self.previous_guess_indices = []
         self.previous_guess_prob =[]
         self.previous_hints = []
@@ -25,14 +26,15 @@ class RLStrategyPlayer(Player):
             curr_dt = datetime.now()
             random_state = int(round(curr_dt.timestamp())) + 1
             self.rng = np.random.default_rng(random_state)
+        self.ord_offset = 97 # used to offset unicode of a-z, change into 0-25
 
     def set_bag_words(self, bag_words):
         """Set dictionary used by the player"""
         Player.set_bag_words(self, bag_words)
 
     def preprocess_input(self, verbose=False):
-        self.processed_input.append(
-            self.previous_guess_indices[-1] + self.num_oov_buckets)
+        for x in self.bag_words.loc[self.previous_guess_indices[-1], "word"]:
+            self.processed_input.append(ord(x) - self.ord_offset + self.num_nonletter_buckets)
         for x in self.previous_hints[-1]:
             self.processed_input.append(self.hint_to_index[x])
         if verbose:
@@ -41,7 +43,7 @@ class RLStrategyPlayer(Player):
 
     def pad(self, x):
         output = x.copy()
-        while len(output) < 30:
+        while len(output) < self.input_size:
             output.append(0)
         return output
 
@@ -52,7 +54,8 @@ class RLStrategyPlayer(Player):
         else:
             self.previous_hints.append(state.hints[-1])
             self.preprocess_input(verbose)
-            tensor = np.array(self.pad(self.processed_input)).reshape((1,30))
+            tensor = np.array(self.pad(self.processed_input)).reshape(
+                (1, self.input_size))
             if verbose:
                 print(tensor)
             predicted_prob = self.model.predict(tensor)
@@ -81,7 +84,8 @@ class RLStrategyPlayer(Player):
             print("Model before training", self.model.trainable_variables)
         target = self.bag_words.query("word == @answer").index.values
         loss_object = keras.losses.SparseCategoricalCrossentropy()
-        tensor = np.array(self.pad(self.processed_input)).reshape((1,30))
+        tensor = np.array(self.pad(self.processed_input)).reshape(
+            (1, self.input_size))
         with tf.GradientTape() as tape:
             predicted_prob = self.model(tensor)
             loss = tf.reduce_mean(loss_object(target, predicted_prob))

@@ -11,7 +11,13 @@ from lib.rl_strategy_player import RLStrategyPlayer
 DATA_PATH = r"wordle_solver\datasets\words"
 SUMMARY_PATH = r"wordle_solver\summary"
 
-NUM_OOV_BUCKETS = 4 # Used in construct reinforcement learning player
+# Player deals with at most 5 previous rounds. For each round, the input grows
+# by 10: the five codes for the previous guess, and the 5 hints
+INPUT_SIZE = 50
+
+# Code the input by making padding as 0, hints 0/1/2 as code 1/2/3,
+# letter a-z as 4-29. Thus there are 4 non-letter coding
+NUM_NONLETTER_BUCKETS = 4
 
 def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     start_time = datetime.now()
@@ -37,7 +43,8 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
 
     game = Game(game_seed_fixed, random_state_game)
     rl_player = RLStrategyPlayer(
-        model, NUM_OOV_BUCKETS, player_seed_fixed, random_state_player)
+        model, INPUT_SIZE, NUM_NONLETTER_BUCKETS, player_seed_fixed,
+        random_state_player)
     game.set_bag_words(bag_word)
     rl_player.set_bag_words(bag_word)
     game_won_count = 0
