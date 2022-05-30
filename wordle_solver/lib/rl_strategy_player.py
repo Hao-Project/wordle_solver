@@ -24,7 +24,6 @@ class RLStrategyPlayer(Player):
             curr_dt = datetime.now()
             random_state = int(round(curr_dt.timestamp())) + 1
             self.rng = np.random.default_rng(random_state)
-        self.ord_offset = 97 # used to offset unicode of a-z, change into 0-25
 
     def set_bag_words(self, bag_words):
         """Set dictionary used by the player"""
