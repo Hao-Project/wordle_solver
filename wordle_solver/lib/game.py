@@ -2,16 +2,20 @@
 
 from string import ascii_lowercase
 from datetime import datetime
+import numpy as np
 
 class Game:
     """A wordle game"""
     def __init__(self, use_fixed_seed=False, random_state=None):
         self.total_round_guess = 6
-        self.use_fixed_seed = use_fixed_seed
-        self.random_state = random_state
         self.bag_words = None
         self.game_state = None
-        self.count_game_played = 0
+        if use_fixed_seed:
+            self.rng = np.random.default_rng(random_state)
+        else:
+            curr_dt = datetime.now()
+            random_state = int(round(curr_dt.timestamp()))
+            self.rng = np.random.default_rng(random_state)
 
     def set_bag_words(self, bag_words):
         """Set words used by the game"""
@@ -19,15 +23,8 @@ class Game:
 
     def set_game_answer(self):
         """Set an answer to a round of game"""
-        if self.use_fixed_seed:
-            new_random_state = self.random_state + self.count_game_played
-        else:
-            curr_dt = datetime.now()
-            new_random_state = (
-                int(round(curr_dt.timestamp())) + self.count_game_played)
-        word = (self.bag_words["word"].sample(
-            n=1, random_state=new_random_state).values[0])
-        return word
+        idx = self.rng.choice(self.bag_words.index, size=1)[0]
+        return self.bag_words.loc[idx, "word"]
 
     def play(self, player, verbose=False):
         """Play one round of game"""
@@ -38,13 +35,11 @@ class Game:
             if verbose:
                 self.game_state.print()
             if self.game_state.has_won:
-                self.count_game_played += 1
                 return self.game_state.has_won
         self.game_state.is_game_ongoing = False
         self.game_state.has_won = False
         if verbose:
             self.game_state.print()
-        self.count_game_played += 1
         return self.game_state.has_won
 
 
