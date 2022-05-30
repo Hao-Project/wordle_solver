@@ -85,23 +85,27 @@ class RLStrategyPlayer(Player):
         self.processed_input = [0] * 5
 
     def train(self, state, optimizer, verbose):
-        answer = state.answer
-        if verbose:
-            print("Model before training", self.model.trainable_variables)
-        target = self.bag_words.query("word == @answer").index.values
-        loss_object = keras.losses.SparseCategoricalCrossentropy()
-        tensor = np.array(self.pad(self.processed_input)).reshape(
-            (1, self.input_size))
-        with tf.GradientTape() as tape:
-            predicted_prob = self.model(tensor)
-            loss = tf.reduce_mean(loss_object(target, predicted_prob))
-        grads = tape.gradient(loss, self.model.trainable_variables)
-        if verbose:
-            print("Gradient Values:", grads)
-        optimizer.apply_gradients(zip(grads,
-            self.model.trainable_variables))
-        if verbose:
-            print("Model after training", self.model.trainable_variables)
+        if state.num_guesses <= 3:
+            if verbose:
+                print(f"lucky with only {state.num_guesses} guess -> not train")
+        else:
+            answer = state.answer
+            if verbose:
+                print("Model before training", self.model.trainable_variables)
+            target = self.bag_words.query("word == @answer").index.values
+            loss_object = keras.losses.SparseCategoricalCrossentropy()
+            tensor = np.array(self.pad(self.processed_input)).reshape(
+                (1, self.input_size))
+            with tf.GradientTape() as tape:
+                predicted_prob = self.model(tensor)
+                loss = tf.reduce_mean(loss_object(target, predicted_prob))
+            grads = tape.gradient(loss, self.model.trainable_variables)
+            if verbose:
+                print("Gradient Values:", grads)
+            optimizer.apply_gradients(zip(grads,
+                self.model.trainable_variables))
+            if verbose:
+                print("Model after training", self.model.trainable_variables)
         self.reset_status()
 
     def save_model(self, model_file):
