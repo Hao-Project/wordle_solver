@@ -7,7 +7,7 @@ from lib.player import Player
 
 class RLStrategyPlayer(Player):
     """Player of Wordle using strategy trained by reinforcement learning"""
-    def __init__(self, random_state, model, num_oov_buckets):
+    def __init__(self, model, num_oov_buckets, random_state):
         Player.__init__(self)
         self.random_state = random_state
         self.model = model

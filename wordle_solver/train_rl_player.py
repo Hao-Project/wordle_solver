@@ -47,7 +47,7 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
         model = keras.models.load_model(model_in_path)
 
     game = Game(game_seed_fixed, random_state_game)
-    rl_player = RLStrategyPlayer(random_state_player, model, NUM_OOV_BUCKETS)
+    rl_player = RLStrategyPlayer(model, NUM_OOV_BUCKETS, random_state_player)
     adam_optimizer = keras.optimizers.Adam(lr=0.01)
     game.set_bag_words(bag_word)
     rl_player.set_bag_words(bag_word)
