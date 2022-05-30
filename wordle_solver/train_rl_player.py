@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 from configparser import ConfigParser
 import pandas as pd
+import tensorflow as tf
 from tensorflow import keras
 from lib.game import Game
 from lib.rl_strategy_player import RLStrategyPlayer
@@ -18,6 +19,8 @@ INPUT_SIZE = 50
 # Code the input by making padding as 0, hints 0/1/2 as code 1/2/3,
 # letter a-z as 4-29. Thus there are 4 non-letter coding
 NUM_NONLETTER_BUCKETS = 4
+
+NUM_TOKENS = 35
 
 def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     start_time = datetime.now()
@@ -40,14 +43,13 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
     model_out_path = config["model"]["model_out"]
 
     if config["common"]["mode"] == "new":
-        embed_size = 20
         num_words = bag_word.shape[0]
         model = keras.models.Sequential([
-            keras.layers.Embedding(
-                num_words + NUM_OOV_BUCKETS, embed_size, input_shape=[30,],
-                mask_zero=True),
-            keras.layers.GRU(128),
-            keras.layers.Dense(50),
+            keras.layers.Input(shape=(INPUT_SIZE,), dtype=tf.int32),
+            keras.layers.CategoryEncoding(
+                num_tokens=NUM_TOKENS, output_mode="multi_hot"),
+            keras.layers.Dense(100),
+            keras.layers.Dense(100),
             keras.layers.Dense(num_words, activation="softmax")
         ])
     else:
