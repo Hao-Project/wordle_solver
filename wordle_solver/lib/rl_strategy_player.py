@@ -1,6 +1,7 @@
 """The player using reinforcement learning strategy for Wordle."""
 
 from datetime import datetime
+from string import ascii_lowercase
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -9,17 +10,14 @@ from lib.player import Player
 class RLStrategyPlayer(Player):
     """Player of Wordle using strategy trained by reinforcement learning"""
     def __init__(
-            self, model, input_size, num_nonletter_buckets,
-            use_fixed_seed=False, random_state=None):
+            self, model, input_size, use_fixed_seed=False, random_state=None):
         Player.__init__(self)
         self.model = model
         self.input_size = input_size
-        self.num_nonletter_buckets = num_nonletter_buckets
         self.previous_guess_indices = []
         self.previous_guess_prob =[]
         self.previous_hints = []
-        self.processed_input = []
-        self.hint_to_index = {"0": 1, "1": 2, "2": 3}
+        self.processed_input = [0] * 5
         if use_fixed_seed:
             self.rng = np.random.default_rng(random_state)
         else:
@@ -32,11 +30,19 @@ class RLStrategyPlayer(Player):
         """Set dictionary used by the player"""
         Player.set_bag_words(self, bag_words)
 
-    def preprocess_input(self, verbose=False):
+    def preprocess_input(self, num_previous_guess, verbose=False):
+        # one-hot code the number of previous guesses
+        for i in range(5):
+            self.processed_input[i] = 0
+        self.processed_input[num_previous_guess-1] = 1
+        # one-hot code the letters of previous guess
         for x in self.bag_words.loc[self.previous_guess_indices[-1], "word"]:
-            self.processed_input.append(ord(x) - self.ord_offset + self.num_nonletter_buckets)
+            for letter in ascii_lowercase:
+                self.processed_input.append(int(x == letter))
+        # one-hot code the previous hint
         for x in self.previous_hints[-1]:
-            self.processed_input.append(self.hint_to_index[x])
+            for token in ["0", "1", "2"]:
+                self.processed_input.append(int(x == token))
         if verbose:
             print(self.processed_input)
         return self.processed_input
@@ -53,7 +59,7 @@ class RLStrategyPlayer(Player):
             guess_index = self.rng.choice(self.bag_words.index, size=1)[0]
         else:
             self.previous_hints.append(state.hints[-1])
-            self.preprocess_input(verbose)
+            self.preprocess_input(state.num_guesses, verbose)
             tensor = np.array(self.pad(self.processed_input)).reshape(
                 (1, self.input_size))
             if verbose:
@@ -76,7 +82,7 @@ class RLStrategyPlayer(Player):
         self.previous_guess_indices = []
         self.previous_guess_prob =[]
         self.previous_hints = []
-        self.processed_input = []
+        self.processed_input = [0] * 5
 
     def train(self, state, optimizer, verbose):
         answer = state.answer
