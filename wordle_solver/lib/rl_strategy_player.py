@@ -90,23 +90,27 @@ class RLStrategyPlayer(Player):
                 print(f"lucky with only {state.num_guesses} guess -> not train")
         else:
             answer = state.answer
-            if verbose:
-                print("Model before training", self.model.trainable_variables)
             target = self.bag_words.query("word == @answer").index.values
-            loss_object = keras.losses.SparseCategoricalCrossentropy()
             tensor = np.array(self.pad(self.processed_input)).reshape(
                 (1, self.input_size))
-            with tf.GradientTape() as tape:
-                predicted_prob = self.model(tensor)
-                loss = tf.reduce_mean(loss_object(target, predicted_prob))
-            grads = tape.gradient(loss, self.model.trainable_variables)
-            if verbose:
-                print("Gradient Values:", grads)
-            optimizer.apply_gradients(zip(grads,
-                self.model.trainable_variables))
-            if verbose:
-                print("Model after training", self.model.trainable_variables)
+            self.train_with_single_round(optimizer, tensor, target, verbose)
         self.reset_status()
+
+    def train_with_single_round(
+            self, optimizer, tensorized_input, target, verbose):
+        if verbose:
+            print("Model before training", self.model.trainable_variables)
+        loss_object = keras.losses.SparseCategoricalCrossentropy()
+        with tf.GradientTape() as tape:
+            predicted_prob = self.model(tensorized_input)
+            loss = tf.reduce_mean(loss_object(target, predicted_prob))
+        grads = tape.gradient(loss, self.model.trainable_variables)
+        if verbose:
+            print("Gradient Values:", grads)
+        optimizer.apply_gradients(zip(grads,
+            self.model.trainable_variables))
+        if verbose:
+            print("Model after training", self.model.trainable_variables)
 
     def save_model(self, model_file):
         self.model.save(model_file)
