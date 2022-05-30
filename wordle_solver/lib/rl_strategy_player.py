@@ -80,8 +80,6 @@ class RLStrategyPlayer(Player):
         if verbose:
             print("Model before training", self.model.trainable_variables)
         target = self.bag_words.query("word == @answer").index.values
-        if verbose:
-            print(target)
         loss_object = keras.losses.SparseCategoricalCrossentropy()
         tensor = np.array(self.pad(self.processed_input)).reshape((1,30))
         with tf.GradientTape() as tape:
@@ -89,7 +87,7 @@ class RLStrategyPlayer(Player):
             loss = tf.reduce_mean(loss_object(target, predicted_prob))
         grads = tape.gradient(loss, self.model.trainable_variables)
         if verbose:
-            print(grads)
+            print("Gradient Values:", grads)
         optimizer.apply_gradients(zip(grads,
             self.model.trainable_variables))
         if verbose:
