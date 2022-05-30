@@ -28,6 +28,7 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     game_play_verbose = config.getboolean("common", "game_play_verbose")
     game_seed_fixed = config.getboolean("common", "game_seed_fixed")
     random_state_game = config.getint("common", "random_state_game")
+    player_seed_fixed = config.getboolean("common", "player_seed_fixed")
     random_state_player = config.getint("common", "random_state_player")
 
     model_path = config["common"]["model"]
@@ -35,7 +36,8 @@ def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     model = keras.models.load_model(model_path)
 
     game = Game(game_seed_fixed, random_state_game)
-    rl_player = RLStrategyPlayer(model, NUM_OOV_BUCKETS, random_state_player)
+    rl_player = RLStrategyPlayer(
+        model, NUM_OOV_BUCKETS, player_seed_fixed, random_state_player)
     game.set_bag_words(bag_word)
     rl_player.set_bag_words(bag_word)
     game_won_count = 0

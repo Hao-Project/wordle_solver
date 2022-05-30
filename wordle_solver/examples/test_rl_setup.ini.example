@@ -6,4 +6,5 @@ game_play_verbose = False
 
 game_seed_fixed = False
 random_state_game = 1
+player_seed_fixed = False
 random_state_player = 12

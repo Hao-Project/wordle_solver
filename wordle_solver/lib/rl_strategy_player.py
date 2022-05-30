@@ -1,5 +1,6 @@
 """The player using reinforcement learning strategy for Wordle."""
 
+from datetime import datetime
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -7,9 +8,10 @@ from lib.player import Player
 
 class RLStrategyPlayer(Player):
     """Player of Wordle using strategy trained by reinforcement learning"""
-    def __init__(self, model, num_oov_buckets, random_state):
+    def __init__(
+            self, model, num_oov_buckets, use_fixed_seed=False,
+            random_state=None):
         Player.__init__(self)
-        self.random_state = random_state
         self.model = model
         self.num_oov_buckets = num_oov_buckets
         self.previous_guess_indices = []
@@ -17,6 +19,12 @@ class RLStrategyPlayer(Player):
         self.previous_hints = []
         self.processed_input = []
         self.hint_to_index = {"0": 1, "1": 2, "2": 3}
+        if use_fixed_seed:
+            self.rng = np.random.default_rng(random_state)
+        else:
+            curr_dt = datetime.now()
+            random_state = int(round(curr_dt.timestamp())) + 1
+            self.rng = np.random.default_rng(random_state)
 
     def set_bag_words(self, bag_words):
         """Set dictionary used by the player"""
@@ -40,8 +48,7 @@ class RLStrategyPlayer(Player):
     def gen_guess(self, state, verbose=False):
         "generate a guess"
         if state.num_guesses == 0:
-            guess_index = (self.bag_words.sample(
-                n=1, random_state=self.random_state).index[0])
+            guess_index = self.rng.choice(self.bag_words.index, size=1)[0]
         else:
             self.previous_hints.append(state.hints[-1])
             self.preprocess_input(verbose)
@@ -53,7 +60,7 @@ class RLStrategyPlayer(Player):
                 print(predicted_prob.shape)
                 print(predicted_prob[0])
                 print(self.bag_words.index.shape[0])
-            guess_index = np.random.choice(
+            guess_index = self.rng.choice(
                 self.bag_words.index, size=1, p=predicted_prob[0])[0]
             if verbose:
                 print(guess_index)
