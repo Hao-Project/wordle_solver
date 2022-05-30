@@ -14,8 +14,8 @@ SUMMARY_PATH = r"wordle_solver\summary"
 # Model needs to guess at round 2-6. For each round, using one-hot coding,the
 # input includes 5 columns for the round number, 26 * 5 columns for the
 # previous guess (26 columns for each letter), and 3 * 5 columns for previous
-# hints. So the maximum input size is (5 + 26*5 + 3*5) * 5 = 750
-INPUT_SIZE = 750
+# hints. So the maximum input size is 5 + (26*5 + 3*5) * 5 = 730
+INPUT_SIZE = 730
 
 def main(config_file=r"wordle_solver\test_rl_setup.ini"):
     start_time = datetime.now()
