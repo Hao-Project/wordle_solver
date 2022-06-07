@@ -89,20 +89,41 @@ class RLStrategyPlayer(Player):
                 print(f"lucky with only {state.num_guesses} guess -> not train")
         else:
             answer = state.answer
-            target = self.bag_words.query("word == @answer").index.values
+            num_previous_guess = state.num_guesses - 1
             tensor = np.array(self.pad(self.processed_input)).reshape(
                 (1, self.input_size))
-            self.train_with_single_round(optimizer, tensor, target, verbose)
+            target = self.bag_words.query("word == @answer").index.values
+            self.train_with_single_round(
+                optimizer, tensor, target, True, verbose)
+            while num_previous_guess >= 1:
+                # Set coding for the round of the game
+                self.processed_input[:5] = [0] * 5
+                self.processed_input[num_previous_guess - 1] = 1
+                # Drop info after this round of guess
+                num_cols_drop = 29 * 5 * (5 - num_previous_guess)
+                self.processed_input[5 + num_previous_guess*29*5:] = (
+                    [0] * num_cols_drop)
+                tensor = np.array(self.pad(self.processed_input)).reshape(
+                    (1, self.input_size))
+                guess = self.previous_guess_indices[num_previous_guess]
+                self.train_with_single_round(
+                    optimizer, tensor, guess, state.has_won, verbose)
+                num_previous_guess -= 1
         self.reset_status()
 
     def train_with_single_round(
-            self, optimizer, tensorized_input, target, verbose):
+            self, optimizer, tensorized_input, guess, has_won, verbose):
         if verbose:
             print("Model before training", self.model.trainable_variables)
         loss_object = keras.losses.SparseCategoricalCrossentropy()
+        learning_rate = 0.1
+        if has_won:
+            reward = 1
+        else:
+            reward = -learning_rate
         with tf.GradientTape() as tape:
             predicted_prob = self.model(tensorized_input)
-            loss = tf.reduce_mean(loss_object(target, predicted_prob))
+            loss = tf.reduce_mean(loss_object(guess, predicted_prob)) * reward
         grads = tape.gradient(loss, self.model.trainable_variables)
         if verbose:
             print("Gradient Values:", grads)
