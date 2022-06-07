@@ -42,9 +42,11 @@ def main(config_file=r"wordle_solver\train_rl_setup.ini"):
         num_words = bag_word.shape[0]
         model = keras.models.Sequential([
             keras.layers.Input(shape=(INPUT_SIZE,), dtype=tf.int32),
-            keras.layers.Dense(100),
-            keras.layers.Dense(100),
-            keras.layers.Dense(num_words, activation="softmax")
+            keras.layers.Dense(150, activation="selu", kernel_initializer="lecun_normal", use_bias=False),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(150, activation="selu", kernel_initializer="lecun_normal", use_bias=False),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(num_words, activation="softmax", use_bias=False)
         ])
     else:
         model = keras.models.load_model(model_in_path)
