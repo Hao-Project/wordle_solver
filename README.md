@@ -1,7 +1,14 @@
 # wordle_solver
-An automated program to solve the Wordle game.
+An program aiming to solve the Wordle game by reinforcement learning.
 
-As of 2022/6/7:
+Wordle is a word-guessing game that requires player to guess a 5-letter word within 6 attempts. You can play it at https://www.nytimes.com/games/wordle/index.html For more information, check the Wikipedia at https://en.wikipedia.org/wiki/Wordle 
+
+Here is a preview of game 
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Wordle_196_example.svg"
+     alt="Markdown Monster icon"
+     style="margin-right: 10px;" />
+
+### Progress as of 2022/6/7:
 Done:
 - Wordle game and abstract game solver
 - Game solver using randomized strategy: randomly guess a word from possible words
