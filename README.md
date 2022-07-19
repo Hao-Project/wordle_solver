@@ -2,7 +2,7 @@
 A program aiming to solve the Wordle game (https://www.nytimes.com/games/wordle/index.html) by reinforcement learning.
 
 Wordle is a word-guessing game that requires player to guess a 5-letter word within 6 attempts. For more information, check the Wikipedia at https://en.wikipedia.org/wiki/Wordle See here for a preview of the game:
-\
+<br>
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Wordle_196_example.svg"
      alt="Markdown Monster icon"
      style="margin-right: 10px;" />
