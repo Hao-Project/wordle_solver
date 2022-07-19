@@ -17,7 +17,7 @@ To Do:
 - Solve challenge of reinforcement learning converging to guessing only in a small groups of words.
 
 To Test:
-- Are there a vanishing gradient issue? Try add clip value?
+- Check whether fast convergence is due to exploding gradient, test adding clip value.
 - Use different models (maybe share early layers) for guesses at different rounds?
 - Only use reinforcement learning for later rounds (round >= 4?)
 
